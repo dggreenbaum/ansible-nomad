@@ -5,6 +5,9 @@
 client {
     enabled = true
     servers = ["nomad.service.consul:4647"]
+    {% if nomad_node_class != "" %}
+    node_class = {{ nomad_node_class }}
+    {% endif %}
 }
 
 # Increase log verbosity

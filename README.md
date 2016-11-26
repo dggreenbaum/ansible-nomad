@@ -36,6 +36,7 @@ The role defines all variables in `defaults/main.yml`:
 | `nomad_log_dir` | `/var/log/nomad` | nomad log path |
 | `nomad_user` | `nomad` | nomad OS user |
 | `nomad_group` | `bin` | nomad OS group |
+| `nomad_node_class` | `""` | Arbitrary node classifier for job placement. |
 | `nomad_region` | `global` | The default region |
 | `nomad_datacenter` | boone | nomad datacenter label |
 | `nomad_log_level` | `INFO` | Logging level |

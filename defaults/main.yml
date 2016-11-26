@@ -13,6 +13,7 @@ nomad_user: "root"
 nomad_group: "bin"
 nomad_region: "global"
 nomad_datacenter: "dc1"
+nomad_node_class: ""
 nomad_log_level: "INFO"
 nomad_syslog_enable: "true"
 nomad_iface: "eth1"
@@ -66,4 +67,3 @@ nomad_ubuntu_os_packages:
   - git
   - libcgroup1
   - unzip
-
