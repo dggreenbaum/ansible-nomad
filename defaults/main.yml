@@ -26,6 +26,16 @@ nomad_apt_key_url: "hkp://p80.pool.sks-keyservers.net:80"
 nomad_apt_key_sig: 58118E89F3A912897C070ADBF76221572C52609D
 nomad_apt_repo: deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower }}-{{ ansible_lsb.codename|lower }} main
 
+## TLS
+nomad_tls_enable: "{{ lookup('env','NOMAD_TLS_ENABLE') | default(false, true) }}"
+nomad_src_files: "{{ lookup('env','NOMAD_SRC_FILES') | default(role_path+'/files', true) }}"
+nomad_tls_dir: "{{ lookup('env','NOMAD_TLS_DIR') | default('/etc/certs/', true) }}"
+nomad_ca_crt: "{{ lookup('env','NOMAD_CA_CRT') | default('ca.crt', true) }}"
+nomad_server_crt: "{{ lookup('env','NOMAD_SERVER_CRT') | default('server.crt', true) }}"
+nomad_server_key: "{{ lookup('env','NOMAD_SERVER_KEY') | default('server.key', true) }}"
+nomad_copy_keys: true
+nomad_verify_server_hostname: false
+
 ## Distribution
 
 ### Nomad

@@ -36,8 +36,8 @@
 # Include variables and define needed variables.
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
-  
-- name: Install specified packages  
+
+- name: Install specified packages
   include: install.yml
 
 - name: Disable SELinux (RHEL)
@@ -75,6 +75,9 @@
 - name: systemd script
   template: src=nomad_systemd.service.j2 dest=/lib/systemd/system/nomad.service owner=root group=root mode=644
   when: ansible_distribution_major_version|int >= 7
+
+- include: ../tasks/tls.yml
+  when: nomad_tls_enable
 
 - name: Start Nomad
   service: name=nomad state=started
