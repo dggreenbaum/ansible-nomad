@@ -1,0 +1,19 @@
+---
+# File: tasks/tls.yml - TLS tasks for Consul
+
+- name: Create SSL directory
+  file: "dest={{ nomad_tls_dir }} state=directory owner=root group=root mode=755"
+
+- block:
+  - name: Copy CA certificate
+    copy: "src={{ nomad_src_files }}/{{ nomad_ca_crt }} dest={{ nomad_tls_dir }}/{{ nomad_ca_crt }}"
+
+  - name: Copy server certificate
+    copy: "src={{ nomad_src_files }}/{{ nomad_server_crt }} dest={{ nomad_tls_dir }}/{{ nomad_server_crt }}"
+
+  - name: Copy server key
+    copy: "src={{ nomad_src_files }}/{{ nomad_server_key }} dest={{ nomad_tls_dir }}/{{ nomad_server_key }}"
+  when: nomad_copy_keys == true
+
+- name: Write TLS configuration
+  template: "src=tls.hcl.j2 dest={{ nomad_config_dir }}/tls.hcl"

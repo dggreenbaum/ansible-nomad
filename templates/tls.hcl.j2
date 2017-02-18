@@ -1,0 +1,8 @@
+tls {
+  http                   =  true
+  rpc                    =  true
+  ca_file                =  "{{ nomad_tls_dir }}/{{ nomad_ca_crt }}"
+  cert_file              =  "{{ nomad_tls_dir }}/{{ nomad_server_crt }}"
+  key_file               =  "{{ nomad_tls_dir }}/{{ nomad_server_key }}"
+  verify_server_hostname =  "{{ nomad_verify_server_hostname }}"
+}
