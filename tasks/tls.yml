@@ -14,6 +14,3 @@
   - name: Copy server key
     copy: "src={{ nomad_src_files }}/{{ nomad_server_key }} dest={{ nomad_tls_dir }}/{{ nomad_server_key }}"
   when: nomad_copy_keys == true
-
-- name: Write TLS configuration
-  template: "src=tls.hcl.j2 dest={{ nomad_config_dir }}/tls.hcl"
