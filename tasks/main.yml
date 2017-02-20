@@ -74,7 +74,7 @@
 
 - name: Reading key for servers that are missing it
   set_fact: nomad_raw_key="{{ lookup('file', '/tmp/nomad_raw.key') }}"
-  when: nomad_raw_key is not defined and not bootstrap_marker.stat.exists
+  when: nomad_raw_key is not defined and bootstrap_marker.stat.exists
 
 - block:
     - name: Generate gossip encryption key
