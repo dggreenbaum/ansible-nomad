@@ -36,8 +36,8 @@
 # Include variables and define needed variables.
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
-  
-- name: Install specified packages  
+
+- name: Install specified packages
   include: install.yml
 
 - name: Disable SELinux (RHEL)
@@ -51,6 +51,40 @@
     - /var/nomad
     - /var/run/nomad
     - /etc/nomad.d
+
+- name: Check bootstrapped state
+  stat: path=/etc/nomad/.nomad_bootstrapped
+  register: bootstrap_marker
+  ignore_errors: true
+
+- block:
+    - name: Look for an existing encryption key on a previously boostrapped server
+      shell: 'cat {{ nomad_config_dir }}/base.hcl | grep "encrypt" | sed -E ''s/"encrypt": "(.+)",?/\1/'' | sed ''s/^ *//;s/ *$//'''
+      register: nomad_key_read
+      run_once: true
+
+    - name: Save encryption key (from existing config)
+      set_fact: nomad_raw_key={{ nomad_key_read.stdout }}
+  when: nomad_raw_key is not defined and bootstrap_marker.stat.exists
+
+- name: Writing key locally to share with other servers that are new
+  local_action: copy content={{ nomad_raw_key }} dest=/tmp/nomad_raw.key
+  become: no
+  when: nomad_raw_key is defined and not bootstrap_marker.stat.exists
+
+- name: Reading key for servers that are missing it
+  set_fact: nomad_raw_key="{{ lookup('file', '/tmp/nomad_raw.key') }}"
+  when: nomad_raw_key is not defined and not bootstrap_marker.stat.exists
+
+- block:
+    - name: Generate gossip encryption key
+      shell: "PATH={{ nomad_bin_dir }}:$PATH nomad keygen"
+      register: nomad_keygen
+      run_once: true
+
+    - name: Save encryption key
+      set_fact: nomad_raw_key={{ nomad_keygen.stdout }}
+  when: nomad_raw_key is not defined and not bootstrap_marker.stat.exists
 
 - name: Base configuration
   template: src=base.hcl.j2 dest={{ nomad_config_dir }}/base.hcl
@@ -78,3 +112,6 @@
 
 - name: Start Nomad
   service: name=nomad state=started
+
+- name: Bootstrapped marker
+  file: dest=/etc/nomad/.nomad_bootstrapped state=touch
