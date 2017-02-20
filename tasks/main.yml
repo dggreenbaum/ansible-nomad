@@ -53,7 +53,7 @@
     - /etc/nomad.d
 
 - name: Check bootstrapped state
-  stat: path=/etc/nomad/.nomad_bootstrapped
+  stat: path=/etc/nomad.d/.nomad_bootstrapped
   register: bootstrap_marker
   ignore_errors: true
 
