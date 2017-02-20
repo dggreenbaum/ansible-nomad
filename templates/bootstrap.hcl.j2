@@ -3,6 +3,7 @@
 server {
     enabled = true
     bootstrap_expect = {{ nomad_server_count }}
+    encrypt = "{{ nomad_raw_key }}"
 }
 
 # Increase log verbosity
