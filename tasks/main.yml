@@ -88,30 +88,44 @@
 
 - name: Base configuration
   template: src=base.hcl.j2 dest={{ nomad_config_dir }}/base.hcl
+  notify:
+    - restart nomad
 
 - name: Bootstrap server configuration
   template: src=bootstrap.hcl.j2 dest={{ nomad_config_dir }}/bootstrap.hcl
+  notify:
+    - restart nomad
 
 - name: Server configuration
   template: src=server.hcl.j2 dest={{ nomad_config_dir }}/server.hcl
+  notify:
+    - restart nomad
 
 - name: Client configuration
   template: src=client.hcl.j2 dest={{ nomad_config_dir }}/client.hcl
+  notify:
+    - restart nomad
 
 - name: SYSV init script
   template: src=nomad_sysvinit.j2 dest=/etc/init.d/nomad owner=root group=root mode=755
   when: not ansible_distribution == "Debian"
+  notify:
+    - restart nomad
 
 - name: Debian init script
   template: src=nomad_debian.init.j2 dest=/etc/init.d/nomad owner=root group=root mode=755
   when: ansible_distribution == "Debian" and ansible_distribution_major_version|int <= 7
+  notify:
+    - restart nomad
 
 - name: systemd script
   template: src=nomad_systemd.service.j2 dest=/lib/systemd/system/nomad.service owner=root group=root mode=644
   when: ansible_distribution_major_version|int >= 7
+  notify:
+    - restart nomad
 
 - name: Start Nomad
   service: name=nomad state=started
 
 - name: Bootstrapped marker
-  file: dest=/etc/nomad/.nomad_bootstrapped state=touch
+  file: dest=/etc/nomad.d/.nomad_bootstrapped state=touch
